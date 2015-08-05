@@ -6,9 +6,12 @@
 //  Copyright © 2015 Mustafa Gezen. All rights reserved.
 //
 
+#define __NARGS(unused, _1, _2, _3, _4, _5, VAL, ...) VAL
+#define NARGS(...) __NARGS(unused, ## __VA_ARGS__, 5, 4, 3, 2, 1, 0)
+
 #define decl_group(x) NSMutableArray *_## x
 
-#define hook_group(GROUP_NAME, TARGET_NAME) \
+#define hook_2(GROUP_NAME, TARGET_NAME) \
 __attribute__((constructor (102))) void _$##GROUP_NAME##CTOR() { \
 if (! _##GROUP_NAME) _##GROUP_NAME = [[NSMutableArray alloc] init]; \
 [_##GROUP_NAME addObject:[NSString stringWithFormat:@"_$%s_%s__", # GROUP_NAME, # TARGET_NAME]]; \
@@ -30,9 +33,13 @@ for (NSString *key in _## x) { \
 [NSClassFromString(key) __load]; \
 }
 
-#define hook(TARGET_NAME) ZKSwizzleInterface(_## TARGET_NAME,TARGET_NAME, NSObject); \
+#define hook_1(TARGET_NAME) ZKSwizzleInterface(_## TARGET_NAME,TARGET_NAME, NSObject) \
 @implementation _## TARGET_NAME
 #define endhook @end
+
+#define __HOOK(ARGC, ARGS...) hook_ ## ARGC (ARGS)
+#define _HOOK(ARGC, ARGS...) __HOOK(ARGC, ARGS)
+#define hook(...) _HOOK(NARGS(__VA_ARGS__), __VA_ARGS__)
 
 #define ctor __attribute__((constructor (103))) void init()
 
