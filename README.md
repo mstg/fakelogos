@@ -11,7 +11,7 @@ hook(SpringBoard)
 }
 endhook
 
-hook_group(ios7, SpringBoard)
+hook(ios7, SpringBoard)
 - (void)applicationDidFinishLaunching:(id)application {
 	_orig(void, application);
 	NSLog(@"Group ios7");
